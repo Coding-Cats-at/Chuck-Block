@@ -1,0 +1,12 @@
+.block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.block__content {
+    background-color: red;;
+}
+
+.block__media {
+
+}
