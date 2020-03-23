@@ -4,9 +4,21 @@
 }
 
 .block__content {
-    background-color: red;;
+    
 }
 
 .block__media {
 
+}
+
+.size_huge {
+    font-size: 50px !important;
+}
+
+.size_normal {
+    font-size: 30px !important;
+}
+
+.size_small {
+    font-size: 12px !important;
 }

@@ -15,6 +15,14 @@ if (!defined('ABSPATH')) {
  * Register the block's assets for the editor
 */
 function register_assets_chuck() {
+    $heading_js = './extended-heading.js';
+    wp_enqueue_script(
+        'heading-js',
+        plugins_url($heading_js, __FILE__),
+        array('wp-element', 'wp-hooks', 'wp-block-editor', 'wp-components'),
+        filemtime(plugin_dir_path( $heading_js, __FILE__))
+    );
+    
     /* SCRIPTS */
     $arnold_js = './arnold.js';
     wp_register_script(
