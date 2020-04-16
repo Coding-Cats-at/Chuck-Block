@@ -13,12 +13,15 @@
 
 .size_huge {
     font-size: 50px !important;
+    color: green;
 }
 
 .size_normal {
     font-size: 30px !important;
+    color: blue;
 }
 
 .size_small {
     font-size: 12px !important;
+    color: red;
 }

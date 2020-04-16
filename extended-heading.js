@@ -1,45 +1,49 @@
+// https://wordpress.stackexchange.com/questions/317178/gutenberg-edit-block-inspector-controls-and-save
+
 (
-    function(element, hooks, blockEditor, components) {
-        const { addFilter } = hooks;
+    function(element, hooks, blockEditor, components, compose, editor) {
+
         const el = element.createElement;
-        const { InspectorControls, RichText } = blockEditor;
+        const { Fragment } = element;
+        const { InspectorControls } = blockEditor;
+        const { PanelBody, SelectControl } = components;
+        const { addFilter } = hooks;
+        const { createHigherOrderComponent } = compose;
 
-        const filterBlocks = (settings) => {
-            if (settings.name !== 'core/heading') {
-                return settings;
-            }
+        const allowedBlocks = [ 'core/heading'];
 
-            const newSettings = {
-                ...settings,
-                attributes: {
-                    ...settings.attributes,
+        function addAttributes(settings) {
+            if (typeof settings.attributes !== 'undefined' && allowedBlocks.includes(settings.name)) {
+                settings.attributes = Object.assign(settings.attributes, {
                     size: {
                         type: 'string',
                         default: 'size_normal'
-                    },
-                    content: {
-                        type: 'string',
-                        default: 'Enter title...'
                     }
-                },
-                edit(props) {
-                    function onChangeContent(newContent) {
-                        props.setAttributes({ content: newContent });
-                    }
+                });
+            }
+            return settings;
+        }
 
-                    return [
-                        // Inspector
+        var withInspectorControlsEdit = createHigherOrderComponent( function( BlockEdit ) {
+            return function( props ) {
+                const { attributes, setAttributes } = props;
+
+                return [
+                    el(
+                        Fragment,
+                        {},
+                        el( BlockEdit, props ),
                         el(
                             InspectorControls,
-                            null,
+                            {},
                             el(
-                                components.PanelBody,
+                                PanelBody,
                                 {
                                     title: 'Style',
                                     initialOpen: true
                                 },
                                 el(
-                                    components.SelectControl,
+                                    SelectControl,
                                     {
                                         label: 'Font Size',
                                         options: [
@@ -48,50 +52,37 @@
                                             { label: 'Small', value: 'size_small'}
                                         ],
                                         onChange: function(value) {
-                                            props.setAttributes({size: value});
+                                            setAttributes({size: value});
                                         },
-                                        value: props.attributes.size
+                                        value: attributes.size
                                     }
                                 )
                             )
-                        ),
-                        // Content
-                        el(
-                            RichText, {
-                                tagName: 'div',
-                                format: 'string',
-                                className: props.attributes.size,
-                                onChange: onChangeContent,
-                                value: props.attributes.content
-                            }
                         )
-                    ]
-                },
-                
-                save(props) {
-                    return el(
-                        RichText.Content, {
-                            tagName: 'div',
-                            className: props.attributes.size,
-                            value: props.attributes.content
-                        }
                     )
-                }
+                ]
+            };
+        }, 'withAdvancedControls' );
+
+        function applyExtraClass(extraProps, blockType, attributes) {
+            const { size } = attributes;
+
+            if (typeof size !== 'undefined' && allowedBlocks.includes(blockType.name)) {
+                extraProps.className += " " + size;
             }
-
-            return newSettings;
+            return extraProps;
         }
-
-        addFilter(
-            'blocks.registerBlockType',
-            'rosa/extended-heading-filter',
-            filterBlocks
-        );
+        
+        addFilter( 'blocks.registerBlockType', 'rosa/extended-heading-attributes', addAttributes );
+        addFilter( 'editor.BlockEdit', 'rosa/extended-heading-control', withInspectorControlsEdit );
+        addFilter( 'blocks.getSaveContent.extraProps', 'rosa/extended-heading-extra-class', applyExtraClass);
     }
 )(
     window.wp.element,
     window.wp.hooks,
     window.wp.blockEditor,
-    window.wp.components
+    window.wp.components,
+    window.wp.compose,
+    window.wp.editor
 )
 

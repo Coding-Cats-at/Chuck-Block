@@ -19,7 +19,7 @@ function register_assets_chuck() {
     wp_enqueue_script(
         'heading-js',
         plugins_url($heading_js, __FILE__),
-        array('wp-element', 'wp-hooks', 'wp-block-editor', 'wp-components'),
+        array('wp-element', 'wp-hooks', 'wp-block-editor', 'wp-components', 'wp-compose', 'wp-editor'),
         filemtime(plugin_dir_path( $heading_js, __FILE__))
     );
     
