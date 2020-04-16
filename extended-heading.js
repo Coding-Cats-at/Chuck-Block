@@ -29,49 +29,56 @@
         var withInspectorControlsEdit = createHigherOrderComponent( function( BlockEdit ) {
             return function( props ) {
                 const { attributes, setAttributes } = props;
-
-                return [
-                    el(
-                        Fragment,
-                        {},
-                        el( BlockEdit, props ),
+                
+                if (allowedBlocks.includes(props.name)) {
+                    return [
                         el(
-                            InspectorControls,
+                            Fragment,
                             {},
+                            el( BlockEdit, props ),
                             el(
-                                PanelBody,
-                                {
-                                    title: 'Style',
-                                    initialOpen: true
-                                },
+                                InspectorControls,
+                                {},
                                 el(
-                                    SelectControl,
+                                    PanelBody,
                                     {
-                                        label: 'Font Size',
-                                        options: [
-                                            { label: 'Huge', value: 'size_huge'},
-                                            { label: 'Normal', value: 'size_normal'},
-                                            { label: 'Small', value: 'size_small'}
-                                        ],
-                                        onChange: function(value) {
-                                            setAttributes({size: value});
-                                        },
-                                        value: attributes.size
-                                    }
+                                        title: 'Style',
+                                        initialOpen: true
+                                    },
+                                    el(
+                                        SelectControl,
+                                        {
+                                            label: 'Font Size',
+                                            options: [
+                                                { label: 'Huge', value: 'size_huge'},
+                                                { label: 'Normal', value: 'size_normal'},
+                                                { label: 'Small', value: 'size_small'}
+                                            ],
+                                            onChange: function(value) {
+                                                setAttributes({size: value});
+                                            },
+                                            value: attributes.size
+                                        }
+                                    )
                                 )
                             )
                         )
-                    )
-                ]
+                    ]
+                } else {
+                    return el (BlockEdit, props);
+                }
             };
         }, 'withAdvancedControls' );
 
         // adding the right css class in the editor
         const withClientIdClassName = createHigherOrderComponent( function(BlockListBlock) {
             return function (props) {
-                var classes = "custom-heading " + props.attributes.size;
-                props.setAttributes({className: classes});
-
+                const { size } = props.attributes; 
+                if (typeof size !== 'undefined' && allowedBlocks.includes(props.name)) {
+                    var classes = "custom-heading " + props.attributes.size;
+                    props.setAttributes({className: classes});
+                }
+                
                 return el(
                     BlockListBlock, props
                 );
