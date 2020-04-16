@@ -11,17 +11,24 @@
 
 }
 
+.custom-heading {
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+}
+
 .size_huge {
     font-size: 50px !important;
-    color: green;
+    color: green !important;
 }
 
 .size_normal {
     font-size: 30px !important;
-    color: blue;
+    color: blue !important;
 }
 
 .size_small {
     font-size: 12px !important;
-    color: red;
+    color: red !important;
 }

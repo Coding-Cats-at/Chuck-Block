@@ -12,6 +12,7 @@
 
         const allowedBlocks = [ 'core/heading'];
 
+        // adding the size attribute to the props
         function addAttributes(settings) {
             if (typeof settings.attributes !== 'undefined' && allowedBlocks.includes(settings.name)) {
                 settings.attributes = Object.assign(settings.attributes, {
@@ -24,6 +25,7 @@
             return settings;
         }
 
+        // adding the option to the controls panel
         var withInspectorControlsEdit = createHigherOrderComponent( function( BlockEdit ) {
             return function( props ) {
                 const { attributes, setAttributes } = props;
@@ -64,6 +66,19 @@
             };
         }, 'withAdvancedControls' );
 
+        // adding the right css class in the editor
+        const withClientIdClassName = createHigherOrderComponent( function(BlockListBlock) {
+            return function (props) {
+                var classes = "custom-heading " + props.attributes.size;
+                props.setAttributes({className: classes});
+
+                return el(
+                    BlockListBlock, props
+                );
+            }
+        }, 'withClientIdClassName');
+
+        // adding the right css class in the frontend
         function applyExtraClass(extraProps, blockType, attributes) {
             const { size } = attributes;
 
@@ -75,6 +90,7 @@
         
         addFilter( 'blocks.registerBlockType', 'rosa/extended-heading-attributes', addAttributes );
         addFilter( 'editor.BlockEdit', 'rosa/extended-heading-control', withInspectorControlsEdit );
+        addFilter( 'editor.BlockListBlock' , 'rosa/extended-heading-class', withClientIdClassName);
         addFilter( 'blocks.getSaveContent.extraProps', 'rosa/extended-heading-extra-class', applyExtraClass);
     }
 )(
